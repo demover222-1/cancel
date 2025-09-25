@@ -9,7 +9,7 @@
 <body>
 <div id="form-page" class="page active">
   <h2 class="page-title">以下の予約をキャンセルしますか？</h2>
-  <div id="reservation-info"></div>
+  <div id="reservation-info">読み込み中...</div>
   <div id="buttons">
     <button id="yesBtn">はい</button>
     <button id="noBtn">いいえ</button>
@@ -51,26 +51,43 @@ window.onload = async function(){
   document.body.style.backgroundSize = "cover";
 
   // -----------------------------
-  // 予約情報取得
+  // 予約情報取得（POST形式）
   // -----------------------------
-  const resInfo = await fetch(`${webhookURL}?userId=${userId}`);
-  const data = await resInfo.json();
+  try {
+    const resInfo = await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, cancel: true })
+    });
+    const data = await resInfo.json();
 
-  document.getElementById('reservation-info').innerHTML =
-    `<p>予約日: ${data.start}<br>担当: ${data.staff}</p>`;
+    document.getElementById('reservation-info').innerHTML =
+      `<p>予約日: ${data.start}<br>担当: ${data.staff}</p>`;
+  } catch(err) {
+    document.getElementById('reservation-info').textContent = "予約情報の取得に失敗しました";
+    console.error(err);
+  }
 
+  // -----------------------------
+  // キャンセルアクション
+  // -----------------------------
   document.getElementById('yesBtn').onclick = () => sendAction('yes');
   document.getElementById('noBtn').onclick = () => sendAction('no');
 
   async function sendAction(action){
-    const res = await fetch(postwebhookURL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ userId, action })
-    });
-    const json = await res.json();
-    document.getElementById('result').textContent = json.message;
-    document.getElementById('buttons').style.display = 'none';
+    try {
+      const res = await fetch(postwebhookURL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ userId, cancelAction: action })
+      });
+      const json = await res.json();
+      document.getElementById('result').textContent = json.message;
+      document.getElementById('buttons').style.display = 'none';
+    } catch(err) {
+      alert("送信に失敗しました");
+      console.error(err);
+    }
   }
 };
 </script>

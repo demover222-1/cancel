@@ -21,24 +21,55 @@
 window.onload = async function(){
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
-  const webappurl = params.get("webappurl");
 
+  const webhookURL = "https://reservations.thinklayer.jp/";
+  const postwebhookURL = "https://reservations.thinklayer.jp/";
+
+  // -----------------------------
+  // CSSパラメータ設定
+  // -----------------------------
+  const root = document.documentElement;
+  const colorMap = {
+    headingColor: "--color-heading",
+    bodyColor: "--color-body",
+    buttonColor: "--color-button-text",
+    bgBody: "--bg-body",
+    bgButtonHover: "--bg-button-hover"
+  };
+
+  for(const key in colorMap){
+    if(params.get(key)) root.style.setProperty(colorMap[key], params.get(key));
+  }
+
+  // 背景画像設定
+  const bgImage = params.get("bgimage");
+  if(bgImage && bgImage.trim()!==""){
+    document.body.style.background = `url("${bgImage}") no-repeat center center fixed`;
+  } else {
+    document.body.style.background = 'url("background.jpg") no-repeat center center fixed';
+  }
+  document.body.style.backgroundSize = "cover";
+
+  // -----------------------------
   // 予約情報取得
-  const resInfo = await fetch(`${webappurl}?userId=${userId}`);
-  const htmlContent = await resInfo.text();
-  document.getElementById('reservation-info').innerHTML = htmlContent;
+  // -----------------------------
+  const resInfo = await fetch(`${webhookURL}?userId=${userId}`);
+  const data = await resInfo.json();
+
+  document.getElementById('reservation-info').innerHTML =
+    `<p>予約日: ${data.start}<br>担当: ${data.staff}</p>`;
 
   document.getElementById('yesBtn').onclick = () => sendAction('yes');
   document.getElementById('noBtn').onclick = () => sendAction('no');
 
   async function sendAction(action){
-    const res = await fetch(webappurl, {
+    const res = await fetch(postwebhookURL, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ userId, action })
     });
-    const data = await res.json();
-    document.getElementById('result').textContent = data.message;
+    const json = await res.json();
+    document.getElementById('result').textContent = json.message;
     document.getElementById('buttons').style.display = 'none';
   }
 };

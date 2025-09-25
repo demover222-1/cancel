@@ -5,6 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>予約キャンセル</title>
 <link rel="stylesheet" href="style.css">
+<style>
+/* 仮のCSS：必要に応じてstyle.cssで上書き可能 */
+body {
+  font-family: 'Rounded Mplus 1c', 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--color-body, #4a4a4a);
+  background: var(--bg-body, #fdfaf6);
+}
+
+.page { display: none; padding: 20px; text-align: center; }
+.page.active { display: block; }
+
+#buttons { margin-top: 20px; }
+#buttons button {
+  padding: 12px 24px;
+  margin: 5px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-button-text, #4a4a4a);
+  color: #fff;
+}
+#buttons button:hover {
+  background-color: var(--bg-button-hover, #7c6b5a);
+}
+
+#reservation-info { margin-top: 15px; font-size: 1.1em; }
+#result { margin-top: 20px; font-weight: bold; color: red; }
+</style>
 </head>
 <body>
 <div id="form-page" class="page active">
@@ -18,12 +49,19 @@
 </div>
 
 <script>
-window.onload = async function(){
+window.onload = async function() {
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
+  const webappurl = params.get("webappurl"); // 必須
 
-  const webhookURL = "https://reservations.thinklayer.jp/";
-  const postwebhookURL = "https://reservations.thinklayer.jp/";
+  if (!userId || !webappurl) {
+    document.getElementById('reservation-info').textContent = "パラメータが不足しています";
+    document.getElementById('buttons').style.display = 'none';
+    return;
+  }
+
+  const webhookURL = webappurl;
+  const postwebhookURL = webappurl;
 
   // -----------------------------
   // CSSパラメータ設定
@@ -36,14 +74,13 @@ window.onload = async function(){
     bgBody: "--bg-body",
     bgButtonHover: "--bg-button-hover"
   };
-
-  for(const key in colorMap){
-    if(params.get(key)) root.style.setProperty(colorMap[key], params.get(key));
+  for (const key in colorMap) {
+    if (params.get(key)) root.style.setProperty(colorMap[key], params.get(key));
   }
 
   // 背景画像設定
   const bgImage = params.get("bgimage");
-  if(bgImage && bgImage.trim()!==""){
+  if (bgImage && bgImage.trim() !== "") {
     document.body.style.background = `url("${bgImage}") no-repeat center center fixed`;
   } else {
     document.body.style.background = 'url("background.jpg") no-repeat center center fixed';
@@ -51,23 +88,29 @@ window.onload = async function(){
   document.body.style.backgroundSize = "cover";
 
   // -----------------------------
-  // 予約情報取得（POST形式）
+  // 予約情報取得
   // -----------------------------
   let reservationData;
   try {
     const resInfo = await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, cancel: true })
+      body: JSON.stringify({ userId, cancel: true, webappurl })
     });
-    reservationData = await resInfo.json();
 
-    if(reservationData.start && reservationData.staff){
+    const text = await resInfo.text();
+    try {
+      reservationData = JSON.parse(text);
+    } catch(e) {
+      throw new Error(`JSON parse error: ${text}`);
+    }
+
+    if (reservationData.start && reservationData.staff) {
       document.getElementById('reservation-info').innerHTML =
         `<p>予約日: ${reservationData.start}<br>担当: ${reservationData.staff}</p>`;
     } else {
       document.getElementById('reservation-info').textContent = reservationData.message || "現在ご予約はありません";
-      document.getElementById('buttons').style.display = 'none'; // ボタン非表示
+      document.getElementById('buttons').style.display = 'none';
     }
   } catch(err) {
     document.getElementById('reservation-info').textContent = "予約情報の取得に失敗しました";
@@ -81,24 +124,30 @@ window.onload = async function(){
   document.getElementById('yesBtn').onclick = () => sendAction('yes');
   document.getElementById('noBtn').onclick = () => sendAction('no');
 
-  async function sendAction(action){
+  async function sendAction(action) {
     try {
-      if(!reservationData || !reservationData.rowNumber){
+      if (!reservationData || !reservationData.rowNumber) {
         alert("キャンセル対象の予約がありません");
         return;
       }
 
       const res = await fetch(postwebhookURL, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ 
-          userId, 
-          cancelAction: action, 
-          rowNumber: reservationData.rowNumber 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          cancelAction: action,
+          rowNumber: reservationData.rowNumber,
+          webappurl
         })
       });
-      const json = await res.json();
-      document.getElementById('result').textContent = json.message;
+
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } 
+      catch(e) { throw new Error(`JSON parse error: ${text}`); }
+
+      document.getElementById('result').textContent = json.message || "処理が完了しました";
       document.getElementById('buttons').style.display = 'none';
     } catch(err) {
       alert("送信に失敗しました");

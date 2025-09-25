@@ -52,16 +52,13 @@ body {
 window.onload = async function() {
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
-  const webappurl = params.get("webappurl"); // 必須
+  const proxyURL = params.get("proxyURL"); // Workers 経由の URL 必須
 
-  if (!userId || !webappurl) {
+  if (!userId || !proxyURL) {
     document.getElementById('reservation-info').textContent = "パラメータが不足しています";
     document.getElementById('buttons').style.display = 'none';
     return;
   }
-
-  const webhookURL = webappurl;
-  const postwebhookURL = webappurl;
 
   // -----------------------------
   // CSSパラメータ設定
@@ -88,22 +85,19 @@ window.onload = async function() {
   document.body.style.backgroundSize = "cover";
 
   // -----------------------------
-  // 予約情報取得
+  // 予約情報取得（Workers 経由）
   // -----------------------------
   let reservationData;
   try {
-    const resInfo = await fetch(webhookURL, {
+    const resInfo = await fetch(proxyURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, cancel: true, webappurl })
+      body: JSON.stringify({ userId, action: "getReservation" })
     });
 
     const text = await resInfo.text();
-    try {
-      reservationData = JSON.parse(text);
-    } catch(e) {
-      throw new Error(`JSON parse error: ${text}`);
-    }
+    try { reservationData = JSON.parse(text); } 
+    catch(e) { throw new Error(`JSON parse error: ${text}`); }
 
     if (reservationData.start && reservationData.staff) {
       document.getElementById('reservation-info').innerHTML =
@@ -131,30 +125,9 @@ window.onload = async function() {
         return;
       }
 
-      const res = await fetch(postwebhookURL, {
+      const res = await fetch(proxyURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          cancelAction: action,
-          rowNumber: reservationData.rowNumber,
-          webappurl
-        })
-      });
-
-      const text = await res.text();
-      let json;
-      try { json = JSON.parse(text); } 
-      catch(e) { throw new Error(`JSON parse error: ${text}`); }
-
-      document.getElementById('result').textContent = json.message || "処理が完了しました";
-      document.getElementById('buttons').style.display = 'none';
-    } catch(err) {
-      alert("送信に失敗しました");
-      console.error(err);
-    }
-  }
-};
-</script>
-</body>
-</html>
+          cancelAction: action

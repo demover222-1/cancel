@@ -52,7 +52,7 @@ body {
 window.onload = async function() {
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
-  const proxyURL = params.get("proxyURL"); // Workers 経由の URL 必須
+  const proxyURL = "https://reservations.thinklayer.jp/"; // Workers 経由の URL 必須
 
   if (!userId || !proxyURL) {
     document.getElementById('reservation-info').textContent = "パラメータが不足しています";
@@ -151,3 +151,4 @@ window.onload = async function() {
 </script>
 </body>
 </html>
+

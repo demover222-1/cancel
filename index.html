@@ -130,4 +130,24 @@ window.onload = async function() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          cancelAction: action
+          cancelAction: action,
+          rowNumber: reservationData.rowNumber
+        })
+      });
+
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); } 
+      catch(e) { throw new Error(`JSON parse error: ${text}`); }
+
+      document.getElementById('result').textContent = json.message || "処理が完了しました";
+      document.getElementById('buttons').style.display = 'none';
+    } catch(err) {
+      alert("送信に失敗しました");
+      console.error(err);
+    }
+  }
+};
+</script>
+</body>
+</html>

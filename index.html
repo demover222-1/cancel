@@ -130,6 +130,7 @@ fetch(webhookURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          webappurl: webappurl,
           userId,
           cancelAction: action,
           rowNumber: reservationData.rowNumber
@@ -152,6 +153,7 @@ fetch(webhookURL, {
 </script>
 </body>
 </html>
+
 
 
 

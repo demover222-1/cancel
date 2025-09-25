@@ -78,15 +78,14 @@ for (const key in colorMap) {
     reservationData = JSON.parse(text);
     if (reservationData.start && reservationData.staff) {
         document.getElementById('reservation-info').innerHTML =
-                    `<div class="reservation-wrapper">
+          `<div class="reservation-wrapper">
             <table class="reservation-table">
               <tr><td class="label">予約日:</td><td class="value">${reservationData.start}</td></tr>
               <tr><td class="label">予約メニュー:</td><td class="value">${reservationData.menu}</td></tr>
               <tr><td class="label">金額:</td><td class="value">${reservationData.price}円</td></tr>
               <tr><td class="label">担当:</td><td class="value">${reservationData.staff}</td></tr>
             </table>
-          </div>
-`;
+          </div>`;
 
     } else {
       document.getElementById('reservation-info').textContent = reservationData.message || "現在ご予約はありません";
@@ -148,6 +147,7 @@ for (const key in colorMap) {
 </script>
 </body>
 </html>
+
 
 
 

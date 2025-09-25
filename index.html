@@ -49,11 +49,13 @@ body {
 </div>
 
 <script>
-window.onload = async function() {
-  const params = new URLSearchParams(window.location.search);
-  const userId = params.get("userId");
-  const proxyURL = "https://reservations.thinklayer.jp/"; // Workers 経由の URL 必須
+const postwebhookURL = "https://reservations.thinklayer.jp/";
+const webhookURL = "https://reservations.thinklayer.jp/";
+const Params = new URLSearchParams(window.location.search);
+const userId = Params.get("userId");
+const webappurl = urlParams.get("webappurl");
 
+window.onload = function() {
   if (!userId || !proxyURL) {
     document.getElementById('reservation-info').textContent = "パラメータが不足しています";
     document.getElementById('buttons').style.display = 'none';
@@ -88,12 +90,11 @@ window.onload = async function() {
   // 予約情報取得（Workers 経由）
   // -----------------------------
   let reservationData;
-  try {
-    const resInfo = await fetch(proxyURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, cancel: true })
-    });
+fetch(webhookURL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true })
+})
 
     const text = await resInfo.text();
     try { reservationData = JSON.parse(text); } 
@@ -125,7 +126,7 @@ window.onload = async function() {
         return;
       }
 
-      const res = await fetch(proxyURL, {
+      const res = await fetch(postwebhookURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -151,5 +152,6 @@ window.onload = async function() {
 </script>
 </body>
 </html>
+
 
 

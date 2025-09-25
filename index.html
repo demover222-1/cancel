@@ -53,10 +53,10 @@ const postwebhookURL = "https://reservations.thinklayer.jp/";
 const webhookURL = "https://reservations.thinklayer.jp/";
 const Params = new URLSearchParams(window.location.search);
 const userId = Params.get("userId");
-const webappurl = urlParams.get("webappurl");
+const webappurl = Params.get("webappurl");
 
 window.onload = function() {
-  if (!userId || !proxyURL) {
+  if (!userId) {
     document.getElementById('reservation-info').textContent = "パラメータが不足しています";
     document.getElementById('buttons').style.display = 'none';
     return;
@@ -153,6 +153,7 @@ fetch(webhookURL, {
 </script>
 </body>
 </html>
+
 
 
 

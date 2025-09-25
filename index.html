@@ -78,14 +78,15 @@ for (const key in colorMap) {
     reservationData = JSON.parse(text);
     if (reservationData.start && reservationData.staff) {
         document.getElementById('reservation-info').innerHTML =
-          `<div style="display: flex; justify-content: center;">
-             <table style="border-collapse: collapse;">
-               <tr><td style="padding: 4px; text-align: left;">予約日:</td><td style="padding: 4px; text-align: left;">${reservationData.start}</td></tr>
-               <tr><td style="padding: 4px; text-align: left;">予約メニュー:</td><td style="padding: 4px; text-align: left;">${reservationData.menu}</td></tr>
-               <tr><td style="padding: 4px; text-align: left;">金額:</td><td style="padding: 4px; text-align: left;">${reservationData.price}円</td></tr>
-               <tr><td style="padding: 4px; text-align: left;">担当:</td><td style="padding: 4px; text-align: left;">${reservationData.staff}</td></tr>
-             </table>
-           </div>`;
+                    `<div class="reservation-wrapper">
+            <table class="reservation-table">
+              <tr><td class="label">予約日:</td><td class="value">${reservationData.start}</td></tr>
+              <tr><td class="label">予約メニュー:</td><td class="value">${reservationData.menu}</td></tr>
+              <tr><td class="label">金額:</td><td class="value">${reservationData.price}円</td></tr>
+              <tr><td class="label">担当:</td><td class="value">${reservationData.staff}</td></tr>
+            </table>
+          </div>
+`;
 
     } else {
       document.getElementById('reservation-info').textContent = reservationData.message || "現在ご予約はありません";
@@ -147,6 +148,7 @@ for (const key in colorMap) {
 </script>
 </body>
 </html>
+
 
 
 

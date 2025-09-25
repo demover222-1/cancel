@@ -55,6 +55,7 @@ body {
 .reservation-table {
   border-collapse: collapse;
   text-align: left; /* テーブル内は左揃え */
+  width: auto;
 }
 
 .reservation-table .label {
@@ -69,4 +70,5 @@ body {
 
 /* 結果表示 */
 #result { margin-top: 20px; font-weight: bold; color: var(--color-result); }
+
 

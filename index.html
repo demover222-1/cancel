@@ -92,7 +92,7 @@ window.onload = async function() {
     const resInfo = await fetch(proxyURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, action: "getReservation" })
+      body: JSON.stringify({ userId, cancel: true })
     });
 
     const text = await resInfo.text();
@@ -151,4 +151,5 @@ window.onload = async function() {
 </script>
 </body>
 </html>
+
 

@@ -53,19 +53,26 @@ window.onload = async function(){
   // -----------------------------
   // 予約情報取得（POST形式）
   // -----------------------------
+  let reservationData;
   try {
     const resInfo = await fetch(webhookURL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, cancel: true })
     });
-    const data = await resInfo.json();
+    reservationData = await resInfo.json();
 
-    document.getElementById('reservation-info').innerHTML =
-      `<p>予約日: ${data.start}<br>担当: ${data.staff}</p>`;
+    if(reservationData.start && reservationData.staff){
+      document.getElementById('reservation-info').innerHTML =
+        `<p>予約日: ${reservationData.start}<br>担当: ${reservationData.staff}</p>`;
+    } else {
+      document.getElementById('reservation-info').textContent = reservationData.message || "現在ご予約はありません";
+      document.getElementById('buttons').style.display = 'none'; // ボタン非表示
+    }
   } catch(err) {
     document.getElementById('reservation-info').textContent = "予約情報の取得に失敗しました";
     console.error(err);
+    document.getElementById('buttons').style.display = 'none';
   }
 
   // -----------------------------
@@ -76,10 +83,19 @@ window.onload = async function(){
 
   async function sendAction(action){
     try {
+      if(!reservationData || !reservationData.rowNumber){
+        alert("キャンセル対象の予約がありません");
+        return;
+      }
+
       const res = await fetch(postwebhookURL, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ userId, cancelAction: action })
+        body: JSON.stringify({ 
+          userId, 
+          cancelAction: action, 
+          rowNumber: reservationData.rowNumber 
+        })
       });
       const json = await res.json();
       document.getElementById('result').textContent = json.message;

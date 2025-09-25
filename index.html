@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>予約キャンセル</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="form-page" class="page active">
+  <h2 class="page-title">以下の予約をキャンセルしますか？</h2>
+  <div id="reservation-info"></div>
+  <div id="buttons">
+    <button id="yesBtn">はい</button>
+    <button id="noBtn">いいえ</button>
+  </div>
+  <p id="result"></p>
+</div>
+
+<script>
+window.onload = async function(){
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId");
+  const webappurl = params.get("webappurl");
+
+  // 予約情報取得
+  const resInfo = await fetch(`${webappurl}?userId=${userId}`);
+  const htmlContent = await resInfo.text();
+  document.getElementById('reservation-info').innerHTML = htmlContent;
+
+  document.getElementById('yesBtn').onclick = () => sendAction('yes');
+  document.getElementById('noBtn').onclick = () => sendAction('no');
+
+  async function sendAction(action){
+    const res = await fetch(webappurl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId, action })
+    });
+    const data = await res.json();
+    document.getElementById('result').textContent = data.message;
+    document.getElementById('buttons').style.display = 'none';
+  }
+};
+</script>
+</body>
+</html>

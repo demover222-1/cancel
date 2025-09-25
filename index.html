@@ -35,18 +35,29 @@ window.onload = function() {
   // -----------------------------
   // CSSパラメータ設定
   // -----------------------------
-  const root = document.documentElement;
-  const colorMap = {
-    headingColor: "--color-heading",
-    bodyColor: "--color-body",
-    buttonColor: "--color-button-text",
-    bgBody: "--bg-body",
-    bgButtonHover: "--bg-button-hover"
-  };
-  for (const key in colorMap) {
-     if (Params.get(key)) root.style.setProperty(colorMap[key], Params.get(key));
+// -----------------------------
+// CSSパラメータ設定
+// -----------------------------
+const root = document.documentElement;
+const colorMap = {
+  headingColor: "--color-heading",
+  bodyColor: "--color-body",
+  labelColor: "--color-label",
+  pageTitleColor: "--color-page-title",
+  buttonColor: "--color-button-text",
+  bgBody: "--bg-body",
+  formBg: "--form-bg",
+  inputBg: "--input-bg",
+  bgButton: "--bg-button",
+  bgButtonHover: "--bg-button-hover",
+  borderInputFocus: "--border-input-focus"
+};
 
-  }
+for (const key in colorMap) {
+  const value = Params.get(key);
+  if (value) root.style.setProperty(colorMap[key], value);
+}
+
 
   // 背景画像設定
   const bgImage = Params.get("bgimage");
@@ -133,6 +144,7 @@ window.onload = function() {
 </script>
 </body>
 </html>
+
 
 
 

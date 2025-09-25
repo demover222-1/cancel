@@ -1,30 +1,51 @@
 :root {
+  /* --- カラー定義 --- */
   --color-body: #4a4a4a;
-  --color-input-button: #4a4a4a;
-  --color-label: #6b5b4d;
+  --color-heading: #333333;
   --color-button-text: #ffffff;
-  --color-page-title: #3399cc;
-  --bg-body: #d0f0fd;
-  --form-bg: #ffffffD9;
-  --input-bg: #f0fbff;
-  --bg-button: #a3d9ff;
-  --bg-button-hover: #7fcfff;
-  --border-input-focus: #bbfaf7;
+  --color-button-text-hover: #ffffff;
+
+  --bg-body: #bdbab7;
+  --bg-button: #7a3030;
+  --bg-button-hover: #7c6b5a;
+
+  --color-result: red;
 }
 
+/* 全体 */
 body {
-  margin:0; padding:0; font-family:'Rounded Mplus 1c','Arial',sans-serif;
-  background-color: var(--bg-body);
-  display:flex; justify-content:center; align-items:center; height:100vh; color:var(--color-body);
+  font-family: 'Rounded Mplus 1c', 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--color-body);
+  background: var(--bg-body);
+  background-size: cover;
 }
 
-.page { display:none; }
-.active { display:block; text-align:center; padding:20px; }
+/* ページ共通 */
+.page { display: none; padding: 20px; text-align: center; }
+.page.active { display: block; }
 
-button {
-  padding:10px 20px; margin:10px; font-size:1em;
-  border-radius:12px; border:none; cursor:pointer;
-  background:var(--bg-button); color:var(--color-button-text);
-  transition:0.3s;
+/* ボタン */
+#buttons { margin-top: 20px; }
+#buttons button {
+  padding: 12px 24px;
+  margin: 5px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--bg-button);
+  color: var(--color-button-text);
+  transition: background-color 0.3s;
 }
-button:hover { background:var(--bg-button-hover); }
+#buttons button:hover {
+  background-color: var(--bg-button-hover);
+  color: var(--color-button-text-hover);
+}
+
+/* 予約情報 */
+#reservation-info { margin-top: 15px; font-size: 1.1em; }
+
+/* 結果表示 */
+#result { margin-top: 20px; font-weight: bold; color: var(--color-result); }

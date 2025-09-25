@@ -90,15 +90,18 @@ window.onload = function() {
   // 予約情報取得（Workers 経由）
   // -----------------------------
   let reservationData;
-fetch(webhookURL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true })
-})
-
-    const text = await resInfo.text();
-    try { reservationData = JSON.parse(text); } 
-    catch(e) { throw new Error(`JSON parse error: ${text}`); }
+  fetch(webhookURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true })
+  })
+  .then(res => res.text())
+  .then(text => {
+    try {
+      reservationData = JSON.parse(text);
+    } catch(e) {
+      throw new Error(`JSON parse error: ${text}`);
+    }
 
     if (reservationData.start && reservationData.staff) {
       document.getElementById('reservation-info').innerHTML =
@@ -119,40 +122,44 @@ fetch(webhookURL, {
   document.getElementById('yesBtn').onclick = () => sendAction('yes');
   document.getElementById('noBtn').onclick = () => sendAction('no');
 
-  async function sendAction(action) {
-    try {
-      if (!reservationData || !reservationData.rowNumber) {
-        alert("キャンセル対象の予約がありません");
-        return;
-      }
+  function sendAction(action) {
+    if (!reservationData || !reservationData.rowNumber) {
+      alert("キャンセル対象の予約がありません");
+      return;
+    }
 
-      const res = await fetch(postwebhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          webappurl: webappurl,
-          userId,
-          cancelAction: action,
-          rowNumber: reservationData.rowNumber
-        })
-      });
-
-      const text = await res.text();
+    fetch(postwebhookURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        webappurl,
+        userId,
+        cancelAction: action,
+        rowNumber: reservationData.rowNumber
+      })
+    })
+    .then(res => res.text())
+    .then(text => {
       let json;
-      try { json = JSON.parse(text); } 
-      catch(e) { throw new Error(`JSON parse error: ${text}`); }
+      try {
+        json = JSON.parse(text);
+      } catch(e) {
+        throw new Error(`JSON parse error: ${text}`);
+      }
 
       document.getElementById('result').textContent = json.message || "処理が完了しました";
       document.getElementById('buttons').style.display = 'none';
-    } catch(err) {
+    })
+    .catch(err => {
       alert("送信に失敗しました");
       console.error(err);
-    }
+    });
   }
 };
 </script>
 </body>
 </html>
+
 
 
 

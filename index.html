@@ -74,11 +74,12 @@ window.onload = function() {
     bgButtonHover: "--bg-button-hover"
   };
   for (const key in colorMap) {
-    if (params.get(key)) root.style.setProperty(colorMap[key], params.get(key));
+     if (Params.get(key)) root.style.setProperty(colorMap[key], Params.get(key));
+
   }
 
   // 背景画像設定
-  const bgImage = params.get("bgimage");
+  const bgImage = Params.get("bgimage");
   if (bgImage && bgImage.trim() !== "") {
     document.body.style.background = `url("${bgImage}") no-repeat center center fixed`;
   } else {
@@ -96,13 +97,9 @@ window.onload = function() {
     body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true })
   })
   .then(res => res.text())
-  .then(text => {
-    try {
-      reservationData = JSON.parse(text);
-    } catch(e) {
-      throw new Error(`JSON parse error: ${text}`);
-    }
-
+.then(text => {
+  try {
+    reservationData = JSON.parse(text);
     if (reservationData.start && reservationData.staff) {
       document.getElementById('reservation-info').innerHTML =
         `<p>予約日: ${reservationData.start}<br>担当: ${reservationData.staff}</p>`;
@@ -115,6 +112,13 @@ window.onload = function() {
     console.error(err);
     document.getElementById('buttons').style.display = 'none';
   }
+})
+.catch(err => {
+  document.getElementById('reservation-info').textContent = "予約情報の取得に失敗しました";
+  console.error(err);
+  document.getElementById('buttons').style.display = 'none';
+});
+
 
   // -----------------------------
   // キャンセルアクション
@@ -159,6 +163,7 @@ window.onload = function() {
 </script>
 </body>
 </html>
+
 
 
 

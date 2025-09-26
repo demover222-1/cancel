@@ -45,22 +45,27 @@ body {
 }
 
 /* 予約情報 */
-#reservation-info { margin-top: 15px; font-size: 1.1em; }
-
 .reservation-wrapper {
   display: flex;
   justify-content: center; /* テーブル全体を中央寄せ */
 }
 
+/* 予約情報 */
+#reservation-info { 
+  margin-top: 15px; 
+  font-size: 1.1em; 
+  text-align: center; /* コンテナは中央寄せ */
+}
+
 .reservation-table {
   border-collapse: collapse;
-  text-align: left; /* テーブル内は左揃え */
-  width: auto;
+  margin: 0 auto;   /* テーブルを中央に配置 */
+  text-align: left; /* テーブルの中身は左揃え */
 }
 
 .reservation-table .label {
   padding-right: 10px;
-  width: 120px; /* 左列の幅を固定して揃える */
+  width: 120px;     /* 左列の幅を固定して揃える */
 }
 
 .reservation-table td {
@@ -68,7 +73,9 @@ body {
 }
 
 
+
 /* 結果表示 */
 #result { margin-top: 20px; font-weight: bold; color: var(--color-result); }
+
 
 

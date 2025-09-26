@@ -20,14 +20,28 @@ body {
   color: var(--color-body);
   background: var(--bg-body);
   background-size: cover;
+  text-align: center;
 }
 
 /* ページ共通 */
-.page { display: none; padding: 20px; text-align: center; }
-.page.active { display: block; }
+.page {
+  display: none;
+  padding: 20px;
+}
+.page.active {
+  display: block;
+}
 
-/* ボタン */
-#buttons { margin-top: 20px; }
+/* 見出し */
+.page-title {
+  color: var(--color-heading);
+  margin-bottom: 20px;
+}
+
+/* ボタン（フォーム内配置） */
+#buttons {
+  margin-top: 20px;
+}
 #buttons button {
   padding: 12px 24px;
   margin: 5px;
@@ -45,16 +59,15 @@ body {
 }
 
 /* 予約情報 */
+#reservation-info {
+  margin-top: 15px;
+  font-size: 1.1em;
+  text-align: center; /* コンテナは中央寄せ */
+}
+
 .reservation-wrapper {
   display: flex;
   justify-content: center; /* テーブル全体を中央寄せ */
-}
-
-/* 予約情報 */
-#reservation-info { 
-  margin-top: 15px; 
-  font-size: 1.1em; 
-  text-align: center; /* コンテナは中央寄せ */
 }
 
 .reservation-table {
@@ -65,17 +78,16 @@ body {
 
 .reservation-table .label {
   padding-right: 10px;
-  width: 120px;     /* 左列の幅を固定して揃える */
+  width: 120px; /* 左列の幅を固定して揃える */
 }
 
 .reservation-table td {
   padding: 4px;
 }
 
-
-
 /* 結果表示 */
-#result { margin-top: 20px; font-weight: bold; color: var(--color-result); }
-
-
-
+#result {
+  margin-top: 20px;
+  font-weight: bold;
+  color: var(--color-result);
+}

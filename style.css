@@ -36,6 +36,10 @@ body {
 .page-title {
   color: var(--color-heading);
   margin-bottom: 20px;
+  background: yellow !important;
+  font-size: 24px;
+  font-weight: bold;
+  display: block !important;
 }
 
 /* ボタン（フォーム内配置） */
@@ -91,4 +95,5 @@ body {
   font-weight: bold;
   color: var(--color-result);
 }
+
 

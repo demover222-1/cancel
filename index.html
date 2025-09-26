@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>予約キャンセル</title>
-<link rel="stylesheet" href="style.css">
 
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>予約キャンセル</title>
 </head>
+
 <body>
 <div id="form-page" class="page active">
   <h2 class="page-title">以下の予約をキャンセルしますか？</h2>
@@ -26,15 +26,18 @@ const userId = Params.get("userId");
 const webappurl = Params.get("webappurl");
 
 window.onload = function() {
-  if (!userId) {
-    document.getElementById('reservation-info').textContent = "パラメータが不足しています";
-    document.getElementById('buttons').style.display = 'none';
-    return;
-  }
 
 // -----------------------------
 // CSSパラメータ設定
 // -----------------------------
+  // CSS 読み込み
+  const cssFile = Params.get("css") || "style.css";
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = cssFile;
+  document.head.appendChild(link);
+
+// カスタムカラー設定
 const root = document.documentElement;
 const colorMap = {
   headingColor: "--color-heading",
@@ -42,6 +45,7 @@ const colorMap = {
   buttonTextColor: "--color-button-text",
   buttonTextHoverColor: "--color-button-text-hover",
   bgBody: "--bg-body",
+  bgForm: "--form-bg",
   bgButton: "--bg-button",
   bgButtonHover: "--bg-button-hover",
   resultColor: "--color-result"
@@ -53,15 +57,21 @@ for (const key in colorMap) {
   if (value) root.style.setProperty(colorMap[key], value);
 }
 
+//～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+  //　--- 背景画像設定 --- //
+  const bgImageParam = Params.get("bgimage"); // URLパラメータ名を「bgimage」に設定
+  const body = document.body;
 
-  // 背景画像設定
-  const bgImage = Params.get("bgimage");
-  if (bgImage && bgImage.trim() !== "") {
-    document.body.style.background = `url("${bgImage}") no-repeat center center fixed`;
+  if(bgImageParam && bgImageParam.trim() !== ""){
+    // URLパラメータがある場合はそのURLを使用
+    body.style.background = `url("${bgImageParam}") no-repeat center center fixed`;
   } else {
-    document.body.style.background = 'url("background.jpg") no-repeat center center fixed';
+    // ない場合はGitHubに置いたbackground.jpgを使用
+    body.style.background = 'url("background.jpg") no-repeat center center fixed';
   }
-  document.body.style.backgroundSize = "cover";
+  body.style.backgroundSize = "cover";
+//～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+
 
   // -----------------------------
   // 予約情報取得（Workers 経由）
@@ -84,8 +94,8 @@ for (const key in colorMap) {
               <tr><td class="label">予約メニュー:</td><td class="value">${reservationData.menu}</td></tr>
               <tr><td class="label">金額:</td><td class="value">${reservationData.price}円</td></tr>
               <tr><td class="label">担当:</td><td class="value">${reservationData.staff}</td></tr>
-            </table>
-          </div>`;
+            </div>
+          </form>`;
 
     } else {
       document.getElementById('reservation-info').textContent = reservationData.message || "現在ご予約はありません";
@@ -110,19 +120,22 @@ for (const key in colorMap) {
   document.getElementById('yesBtn').onclick = () => sendAction('yes');
   document.getElementById('noBtn').onclick = () => sendAction('no');
 
-  function sendAction(action) {
+function sendAction(action) {
+  if (action === 'yes') {
+    // 予約情報がなければアラート
     if (!reservationData || !reservationData.rowNumber) {
       alert("キャンセル対象の予約がありません");
       return;
     }
 
+    // サーバーへ送信
     fetch(postwebhookURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         webappurl,
         userId,
-        cancelAction: action,
+        cancelAction: true,
         rowNumber: reservationData.rowNumber
       })
     })
@@ -135,38 +148,26 @@ for (const key in colorMap) {
         throw new Error(`JSON parse error: ${text}`);
       }
 
-      document.getElementById('result').textContent = json.message || "処理が完了しました";
+	  document.getElementById('result').innerHTML = 
+		  (json.message && json.message.trim() !== "") 
+			? json.message 
+			: "ご予約の削除をさせていただきました。<br>またのご予約お待ちしております";
+
       document.getElementById('buttons').style.display = 'none';
     })
     .catch(err => {
       alert("送信に失敗しました");
       console.error(err);
     });
+
+  } else if (action === 'no') {
+    // 「いいえ」の場合はメッセージだけ表示
+    document.getElementById('result').textContent = "またのご利用をお待ちしております";
+    document.getElementById('buttons').style.display = 'none';
   }
+}
+
 };
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

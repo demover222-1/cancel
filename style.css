@@ -1,0 +1,148 @@
+/* キャンセル*/
+
+:root {
+  /* --- 文字色 --- */
+  --color-page-title: #3399cc;           /* タイトルと完了ページ */
+  --color-body: #4a4a4a;                 /* フォーム内 */
+
+  /* --- 背景 --- */
+  --form-bg: #ffffffD9;                  /* フォーム内 */
+
+  /* --- ボタン関連 --- */
+  --color-button-text: #ffffff;          /* 文字色 */
+  --bg-button: #a3d9ff;                  /* 背景色 */
+
+}
+
+/* 全体 */
+body {
+  font-family: 'Rounded Mplus 1c', 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--color-body);
+  background-size: cover;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* 背景はJSで設定するのでここでは初期値のみ */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* ページ共通 */
+.page { 
+	display: none; 
+	padding: 20px; 
+	text-align: center;
+ }
+
+.page.active { display: block; }
+
+/* タイトル文字 */
+.page-title {
+  text-align: center;
+  margin-top: 0;
+  font-size: 2em;
+  color: var(--color-page-title);
+  line-height: 1.3;
+
+
+  text-shadow:
+    -2px -2px 3px #ffffffd9,
+     2px -2px 3px #ffffffd9,
+    -2px  2px 3px #ffffffd9,
+     2px  2px 3px #ffffffd9;
+}
+
+/* ボタン */
+#buttons { margin-top: 20px; }
+#buttons button {
+  padding: 12px 24px;
+  margin: 5px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--bg-button);
+  color: var(--color-button-text);
+  transition: background-color 0.3s;
+}
+#buttons button:hover {
+  background-color: var(--bg-button);
+}
+
+/* 予約情報 */
+#reservation-info { 
+  margin-top: 15px;
+  font-size: 1.1em; 
+  background-color: var(--form-bg);  /* 半透明ホワイト */
+  padding: 20px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  display: inline-block;       /* 幅をテーブルに合わせる */
+  margin: 0 auto 20px auto;    /* 中央寄せ + 下マージン */
+}
+
+.reservation-wrapper {
+  display: flex;
+  justify-content: center; /* テーブル全体を中央寄せ */
+}
+
+.reservation-table {
+  border-collapse: collapse;
+  text-align: left; /* テーブル内は左揃え */
+}
+
+.reservation-table .label {
+  padding-right: 10px;
+  width: 120px; /* 左列の幅を固定して揃える */
+}
+
+.reservation-table td {
+  padding: 4px;
+}
+
+
+/* 結果表示 */
+#result { 
+	margin-top: 20px; 
+	font-weight: bold; 
+	color: var(--color-page-title);
+
+  text-shadow:
+    -2px -2px 3px #ffffffd9,
+     2px -2px 3px #ffffffd9,
+    -2px  2px 3px #ffffffd9,
+     2px  2px 3px #ffffffd9;
+ }
+
+/* --- スマホ対応レスポンシブ --- */
+@media (max-width: 480px) {
+  form {
+    width: 90%;              /* 画面幅に合わせる */
+    padding: 20px;           /* 少し狭めのパディング */
+    border-radius: 16px;     
+  }
+
+  .page-title {
+    font-size: 1.6em;        /* 小さい画面でも文字が大きすぎない */
+  }
+
+  input, button {
+    font-size: 0.95rem;      /* フォントを少し小さく */
+    padding: 10px;           /* スマホ用に調整 */
+    max-width: 100%;         /* はみ出さないように */
+  }
+
+  body, #completion-page {
+    min-height: 100vh;       /* アドレスバーで高さが変動してもOK */
+  }
+
+  #completion-page {
+    padding: 15px;
+  }
+}

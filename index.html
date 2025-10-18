@@ -24,6 +24,7 @@ const webhookURL = "https://reservations.thinklayer.jp/";     //get用webhookUrl
 const Params = new URLSearchParams(window.location.search);
 const userId = Params.get("userId");
 const webappurl = Params.get("webappurl");
+const sheetId = urlParams.get("sheetId");
 
 window.onload = function() {
 
@@ -85,7 +86,7 @@ body.style.backgroundSize = "cover";
   fetch(webhookURL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true })
+    body: JSON.stringify({ webappurl: webappurl, userId: userId, cancel: true, sheetId: sheetId })
   })
   .then(res => res.text())
 .then(text => {
@@ -143,8 +144,9 @@ function sendAction(action) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        webappurl,
-        userId,
+        webappurl: webappurl,
+        userId: userId,
+		sheetId: sheetId,
         cancelAction: true,
         rowNumber: reservationData.rowNumber
       })
@@ -184,6 +186,7 @@ function sendAction(action) {
 </script>
 </body>
 </html>
+
 
 
 
